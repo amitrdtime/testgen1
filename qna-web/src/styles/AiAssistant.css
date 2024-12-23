@@ -1,0 +1,133 @@
+* {
+  font-family: 'Satoshi', sans-serif !important;
+}
+
+.ai-assistant {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+}
+
+.ai-chat-box {
+  flex: 1;
+  padding: 16px;
+}
+
+.ai-search-bar {
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-right: 27%;
+  margin-left: 20%;
+  margin-bottom: 5%;
+}
+
+.ai-chat-history {
+  padding: 1px;
+}
+
+.ai-chat-grid {
+  background: #F5F8FF;
+  height: 100vh;
+  margin-top: -12px !important;
+}
+
+.ai-history-grid {
+  background: #ffffff;
+  height: 100vh;
+  border-left: 1px solid #F4F4F6;
+}
+
+.aiAssiatantRow {
+  margin-left: 228px !important;
+}
+
+.aiAssiatantRow .aiAssiatantHeaderRow {
+  align-items: center !important;
+  background-color: #F5F8FF;
+}
+
+.aiAssiatantRow .aiAssiatantHeaderRow .column {
+  display: block !important;
+  padding-top: 0px !important;
+  margin-top: -2px;
+}
+
+.aiAssiatantRow~.app-wrapper .twelve.wide {
+  margin-left: -18px;
+  margin-top: -15px;
+}
+
+.aiAssiatantSecondDiv {
+  width: auto !important;
+}
+
+.aiAssiatantThirdDiv {
+  width: 382px !important;
+}
+
+.aiAssiatantRow .aiAssiatantHeaderRow .ui.primary.button.button-ai-new-chat {
+  border-radius: 16px;
+}
+
+.aiAssiatantRow .aiAssiatantHeaderRow {
+  display: grid !important;
+  grid-template-columns: 1fr 380px;
+  padding-top: 0px !important;
+}
+
+.aiAssiatantRow .aiAssiatantHeaderRow .aiAssistantSegment {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 24px;
+  margin-top: 12px;
+}
+
+.row.aiAssiatantHeaderRow {
+  width: 50vw !important;
+}
+
+.chatHistoryLeft {
+  width: 320px;
+}
+
+.chatHistoryLeft input {
+  border-radius: 16px !important;
+  border: 1px solid #E3E3E8 !important;
+}
+
+.chatHistoryLeft .menu-item-search.chatHistory {
+  margin-bottom: 8px !important;
+}
+
+.ai-assistant .ai-chat-box .chat-container {
+  width: 48vw;
+}
+
+.ai-assistant .ai-chat-box .chat-container .input-arear {
+  width: 48vw;
+}
+i.icon.calendar:before{
+  content: '\f073' !important;
+    font-family: Icons;
+    transform: translateY(-50%);
+}
+
+i.icon.angle.left:before {
+  content: '\f100' !important;
+    font-family: Icons;
+    transform: translateY(-50%);
+}
+i.icon.angle.double.left:before {
+  content: '\f100' !important;
+    font-family: Icons;
+    transform: translateY(-50%);
+}
+
+i.icon.angle.right:before {
+  content: '\f101' !important;
+    font-family: Icons;
+    transform: translateY(-50%);
+}

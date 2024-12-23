@@ -1,0 +1,77 @@
+trigger:
+  branches:
+    include:
+      - main
+      - development
+  paths:
+    exclude:
+      - README.md
+
+schedules:
+- cron: '0 */12 * * *'
+  displayName: Test every 12 hours
+  branches:
+    include:
+    - main
+    - feature/2286-cypress-cloud-integration
+  always: "true"
+
+stages:
+  - stage: Start
+    jobs:
+      - job: Start
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - script: echo "Starting the pipeline"
+            displayName: "Starting the pipeline"
+  - stage: BranchTest
+    condition: in(variables['Build.Reason'], 'PullRequest', 'Manual')
+    dependsOn: Start
+    jobs:
+      - job: Test_Branch
+        timeoutInMinutes: '10'
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - task: NodeTool@0
+            displayName: "Use Node 16.x"
+            inputs:
+              versionSpec: 16.x
+              checkLatest: true
+          - task: Npm@1
+            displayName: "npm install"
+            inputs:
+              command: custom
+              verbose: false
+              customCommand: "install --force"
+          - script: |
+              nohup bash -c 'npm run start' &
+            displayName: "Run app"
+          - template: .azure/steps.yaml
+            parameters:
+              env: "local"
+
+  - stage: DevTest
+    dependsOn: Start
+    condition: eq(variables['Build.Reason'], 'Schedule')
+    jobs:
+      - job: Dev_Test
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - template: .azure/steps.yaml
+            parameters:
+              env: "dev"
+
+  - stage: ProdTest
+    dependsOn: Start
+    condition: eq(variables['Build.Reason'], 'Schedule')
+    jobs:
+      - job: Prod_Test
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - template: .azure/steps.yaml
+            parameters:
+              env: "prd"

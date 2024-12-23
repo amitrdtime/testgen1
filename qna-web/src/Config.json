@@ -1,0 +1,19 @@
+{
+  "devUrl": "https://qnawebdev.z13.web.core.windows.net",
+  "prdUrl": "https://qnawebprd-secondary.z13.web.core.windows.net",
+  "local": {
+    "loginUrl": "https://innoverqnasystem.b2clogin.com/InnoverQnASystem.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_qnasignin&client_id=acc30c2f-0919-4519-87dc-1632dcf64561&nonce=defaultNonce&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2F&scope=openid&response_type=id_token&prompt=login",
+    "ClientId": "acc30c2f-0919-4519-87dc-1632dcf64561",
+    "Ocp_Apim_Subscription_Key": "5af5a3831e4f4d17add0ccb75753ded3"
+  },
+  "dev": {
+    "loginUrl": "https://innoverqnasystem.b2clogin.com/InnoverQnASystem.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_qnasignin&client_id=acc30c2f-0919-4519-87dc-1632dcf64561&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fqnawebdev.z13.web.core.windows.net%2F&scope=openid&response_type=id_token&prompt=login",
+    "ClientId": "acc30c2f-0919-4519-87dc-1632dcf64561",
+    "Ocp_Apim_Subscription_Key": "5af5a3831e4f4d17add0ccb75753ded3"
+  },
+  "prod": {
+    "loginUrl": "https://innoverqnasystem.b2clogin.com/InnoverQnASystem.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_qnasignin&client_id=acc30c2f-0919-4519-87dc-1632dcf64561&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fqnawebprd-secondary.z13.web.core.windows.net%2F&scope=openid&response_type=id_token&prompt=login",
+    "ClientId": "acc30c2f-0919-4519-87dc-1632dcf64561",
+    "Ocp_Apim_Subscription_Key": "5af5a3831e4f4d17add0ccb75753ded3"
+  }
+}

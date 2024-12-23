@@ -1,0 +1,87 @@
+* {
+    font-family: 'Satoshi', sans-serif !important;
+}
+
+.add-document-model {
+    padding: 23px 24px 24px 24px !important;
+    border-radius: 16px !important;
+    gap: 28px;
+}
+
+.add-document-model .cancel-btn {
+    width: 20%;
+    padding: 14px 16px 13px 16px;
+    border-radius: 16px;
+    gap: 8px;
+    background: #EBF2FF !important;
+    color: #0053ED;
+    margin-right: 5%;
+    font-weight: 600;
+    border: none;
+}
+
+.add-document-model .add-btn {
+    width: 32%;
+    padding: 14px 16px 13px 16px;
+    border-radius: 16px;
+    gap: 8px;
+    background: #0053ed !important;
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+}
+
+.add-document-model .add-btn:disabled {
+    width: 32%;
+    padding: 14px 16px 13px 16px;
+    border-radius: 16px;
+    gap: 8px;
+    background: #99baf8 !important;
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+}
+
+.add-document-model h5.ui.header {
+    color: #647087;
+}
+
+.add-document-model .actions {
+    border: none !important;
+}
+
+.add-document-model .select-extraction-type {
+    padding: 11px, 16px, 11px, 16px;
+    border-radius: 16px;
+    border: 1px;
+    justify-content: space-between;
+
+}
+
+.add-document-model .upload-button-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2185d0;
+}
+
+.emptyContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.emptyContainer .emptyMessage {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #97A3BA;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.add-datset-input {
+    width: 100%;
+}

@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "cypress": "^13.6.4"
+  },
+  "scripts": {
+    "cy:verify": "cypress verify",
+    "start": "node ./cypress/scripts/start.js",
+    "e2e:record": "cypress run --record --key 1390a3a4-47ee-4c8d-a29f-d31515bc1db3",
+    "e2e": "cypress run",
+    "run-p": "npm run run-p",
+    "test:ci:record": "run-p --race start e2e:record"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+}

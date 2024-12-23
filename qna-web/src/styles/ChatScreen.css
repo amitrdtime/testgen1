@@ -1,0 +1,311 @@
+* {
+    font-family: 'Satoshi', sans-serif !important;
+}
+
+.continue-btn {
+    width: 25%;
+    margin: 20px 300px;
+    padding: 14px 16px 13px 16px;
+    border-radius: 16px;
+    gap: 8px;
+    background: #0053ed !important;
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+}
+
+.continue-btn:disabled {
+    width: 25%;
+    margin: 25px 300px;
+    padding: 14px 16px 13px 16px;
+    border-radius: 16px;
+    gap: 8px;
+    background: #0053ed !important;
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+    opacity: 0.45;
+}
+
+.chat-screen {
+    width: 680px !important;
+    padding: 18px 24px 24px 24px !important;
+}
+
+.datasetRadioOption:checked {
+    accent-color: red;
+}
+
+.chatHistory {
+    margin-bottom: 0px !important;
+    margin-left: 13px !important;
+    height: 40px !important;
+}
+
+.menu-item-search label.chat {
+    width: 150px !important;
+    padding: 17px 5px !important;
+    margin: -12px -15px;
+}
+
+.menu-item-search label.dataset {
+    width: 120px !important;
+    padding: 6px 7px !important;
+    background-color: #F4F4F6;
+    margin: -3px 139px;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.chatHistory h5 input.text {
+    background-color: #716e6e14 !important;
+}
+
+label.filterData {
+    width: 200px !important;
+    padding: 8px 10px !important;
+    background-color: #F4F4F6;
+    border-radius: 24px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.filterBlue {
+    background-color: #EBF2FF !important;
+    color: #0053ED;
+    font-weight: 500;
+}
+
+.menu-item-search label.inputChatBox {
+    width: 270px !important;
+    padding: 17px 5px !important;
+    margin: -12px -15px;
+    font-size: 14pt;
+}
+
+.menu-item-search input.inputChatBoxTxt {
+    padding: 3px 5px !important;
+}
+
+.chatHistoryLeft .chatHistoryOuter .menu-item-search.chatHistory {
+    border: 2px solid #F4F4F6;
+    display: flex !important;
+    justify-content: space-between;
+    border-radius: 16px;
+    width: 320px;
+    padding: 8px 8px 8px 12px;
+    position: relative;
+}
+
+.chatHistoryLeft .chatHistoryOuter .menu-item-search.chatHistory div {
+    display: flex;
+}
+
+.chatHistoryLeft .chatHistoryOuter .menu-item-search.chatHistory:hover {
+    background-color: #F4F4F6;
+}
+
+.chatHistoryLeft .chatHistoryOuter .menu-item-search.chatHistory .chat {
+    font-size: 14px;
+    width: 158px !important;
+}
+
+.chatHistoryLeft .chatHistoryOuter {
+    margin-bottom: 24px;
+}
+
+.chatHistoryLeft .chatHistoryOuter .datasetHover .dataset {
+    background-color: #F4F4F6;
+    margin-left: 40px;
+}
+
+.chatHistoryLeft .chatHistoryOuter .chatBox .chat {
+    padding: 0px !important;
+}
+
+.chatHistoryLeft .chatHistoryOuter .datasetBox .dataset {
+    width: auto !important;
+    padding: 0px 12px !important;
+}
+
+.chatHistoryLeft .chatHistoryOuter h5 {
+    color: #97A3BA;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.menu-item-search label.inputChatBox {
+    padding: -8px -8px -8px -12px !important;
+    margin: -14px -20px !important;
+}
+
+.menu-item-search input.inputChatBoxTxt, .menu-item-search input.inputChatBoxTxt:hover {
+    background-color: #F4F4F6;
+    border: 2px solid #F4F4F6 !important;
+}
+
+.menu-item-search input.inputChatBoxTxt {
+    padding: 40px 62px 26px 16px !important;
+    font-size: 14px;
+}
+
+.chatHistoryLeft .chatHistoryOuter .menu-item-search.chatHistory:hover .tooltipBox {
+    display: block;
+}
+
+.chatHistoryLeft .chatHistoryOuter .menu-item-search.chatHistory .tooltipBox {
+    position: absolute;
+    display: none;
+    border-radius: 16px;
+    padding: 12px;
+    color: #fff;
+    background-color: #14181F;
+    z-index: 100;
+}
+
+.chatHistoryOuter h5 {
+    margin-bottom: 6px;
+}
+
+.filterBox {
+    box-shadow: none !important;
+    border: 1px solid #F4F4F6 !important;
+    border-radius: 16px !important;
+    padding: 10px 16px 8px 16px !important;
+}
+
+.filterBox h5 {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.filterBox .filterOuterBox:last-child .filterData {
+    width: auto !important;
+}
+
+.filterBox .filterOuterBox:last-child {
+    margin-bottom: 12px;
+
+}
+
+.filterBox .filterOuterBox:last-child {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: -6px;
+}
+
+.filterBox .filterOuterBox:first-child {
+    display: flex;
+    gap: 8px;
+}
+
+.filterBox .filterOuterBox:first-child {
+    margin-bottom: 14px !important;
+}
+
+.filterBox .filterOuterBox {
+    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.filterBox .filterOuterBox .filterData img {
+    display: inline-block;
+    margin-left: 8px;
+    margin-bottom: 3px;
+}
+
+.chatWithHistory {
+    display: grid !important;
+    grid-template-columns: 1fr 317px !important;
+    margin-left: -18px;
+    margin-right: -22px;
+    margin-top: -16px;
+    width: 100% !important;
+}
+
+.chatWithHistory .ai-chat-grid {
+    width: 100% !important;
+}
+
+.chatHistoryLeft .filterOuterBox label.filterData.startDate {
+    margin-right: 8px;
+}
+
+.skelton-dataset-grid {
+    margin-bottom: 8px;
+    margin-top: 2px;
+}
+
+.skelton-dataset-grid-column {
+    background-color: #f4f4f6;
+}
+
+.skelton-dataset-grid-div {
+    width: 100px;
+    height: 20px;
+}
+
+.skelton-chat-radio-column {
+    background-color: #f4f4f6;
+}
+
+.skelton-chat-radio-column-div {
+    width: 100px;
+    height: 20px;
+}
+
+.skelton-chat-radio-row{
+    margin-top: 5px;
+}
+
+.dropdown-dataset.dropdown::after {
+    content: '\f0d7' !important;
+    font-family: Icons;
+    position: absolute;
+    top: 50%;
+    right: 10px; 
+    transform: translateY(-50%);
+  }
+  .dropdown-dataset.dropdown::before {
+    content: '\f0d7' !important;
+    font-family: Icons;
+    position: absolute;
+    top: 50%;
+    right: 10px; 
+    transform: translateY(-50%);
+  }
+  
+  .ui.dropdown>.dropdown.icon:before {
+    content: ''  !important;
+  }
+  i.icon.dropdown:before {
+    content: ""  !important;
+  }
+  .ai-search-input::after {
+    content: '\f002' !important;
+    font-family: Icons;
+    position: absolute;
+    top: 50%;
+    right: 10px; 
+    transform: translateY(-50%);
+  }
+
+  .no-dataset-header{
+     margin-bottom: 10px;
+     color: #cfcfcf !important;
+  }
+
+  .no-dataset-dropdown{
+    margin-bottom: 20px;
+    border: 1px solid #F4F4F6;
+    padding: 8px;
+    border-radius: 15px;
+  }
+
+  .skelton-dataset-grid-empty{
+    margin-top: 20px !important;
+    margin-bottom: 10px !important;
+  }

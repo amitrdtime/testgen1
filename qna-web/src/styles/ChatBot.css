@@ -1,0 +1,143 @@
+* {
+  font-family: 'Satoshi', sans-serif !important;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chat-message-area {
+  flex-grow: 1;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  height: 75vh;
+  /* max-height: 500px; */
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.chat-message-area::-webkit-scrollbar {
+  width: 0em;
+}
+
+.message {
+  display: flex;
+  padding: 12px 22px;
+  margin-bottom: 12px;
+}
+
+.message.question {
+  display: flex;
+  justify-content: end;
+}
+
+.message.question .question-box {
+  border-radius: 16px;
+  background-color: #E5EEFF;
+  padding: 18px 28px 18px 16px;
+  position: relative;
+  max-width: 550px;
+}
+
+.message.answer {
+  display: flex;
+}
+
+.message.answer .question-box {
+  border-radius: 16px;
+  justify-content: flex-start;
+  background-color: #ffffff;
+  padding: 18px 16px 18px 28px;
+  position: relative;
+  max-width: 550px;
+}
+
+.input-area {
+  padding: 10px;
+  display: flex;
+}
+
+.input-bar {
+  flex-grow: 1;
+  margin-right: 10px;
+  border-radius: 16px;
+  border: 2px solid #E3E3E8;
+  padding-left: 18px;
+  height: 44px;
+}
+
+.input-bar:placeholder {
+  color: #97A3BA;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.question-box {
+  position: relative;
+}
+
+.icons-question {
+  z-index: 9;
+  position: absolute;
+  right: -22px;
+  bottom: -22px;
+  width: 40px;
+  height: 40px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border: 1px solid #F4F4F6;
+}
+
+.message.answer {
+  position: relative;
+}
+
+.icons-answer {
+  z-index: 9;
+  position: absolute;
+  left: -22px;
+  bottom: -22px;
+  width: 40px;
+  height: 40px;
+  background-color: #E0EAFF;
+  border-radius: 12px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.custom-ai-input {
+  position: relative;
+}
+
+.custom-ai-input input {
+  padding-left: 108px !important;
+}
+
+.ai-dataset-box {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  left: 7px;
+  background-color: #f0f0f0;
+  padding: 5px 8px;
+  border-radius: 12px;
+  width: 98px;
+  display: flex;
+  justify-content: center;
+}

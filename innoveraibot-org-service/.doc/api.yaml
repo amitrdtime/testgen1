@@ -1,0 +1,146 @@
+openapi: 3.0.3
+info:
+  title: InnoSense - Organization Service
+  version: 0.0.1
+servers:
+  - url: http://localhost:8080/api
+    description: Local server
+tags:
+  - name: org
+    description: Operations about creating organization
+
+security:
+  - Bearer: []
+
+paths:
+  /wake-up:
+    get:
+      tags:
+        - General
+      summary: Wake up the system
+      responses:
+        "200":
+          description: System woke up
+          
+  /org:
+    post:
+      tags:
+        - Org
+      summary: Create an organization entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrgRequest"
+      responses:
+        "200":
+          description: Org created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Org"
+        "400":
+          description: Bad request / Org exists
+    get:
+      tags:
+        - Org
+      summary: Get all orgs
+      responses:
+        "200":
+          description: Org created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Org"
+        "400":
+          description: Bad request / Org exists
+components:
+  schemas:
+    OrgRequest:
+      type: object
+      properties:
+        orgName:
+          type: string
+          description: The unique identifier for a user.
+        orgAdminName:
+          type: string
+          description: The unique identifier for a chat.
+        orgAdminCommunicationEmail:
+          type: string
+          description: The identifier for a user name.
+        logoBase64:
+          type: string
+          description: The unique identifier for a chatMetaId.
+        orgDescription:
+          type: string
+          description: The unique identifier for a datasetId.
+        orgAdminLoginId:
+          type: string
+          description: The identifier name for a dataset.
+        createdBy:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The identifier name for a likeType.
+              default: ""
+            name:
+              type: string
+              description: The identifier name for a reason.
+              default: ""
+            superUserEmail:
+              type: string
+              description: The identifier name for a suggestionType.
+              default: ""
+        createdUTC:
+          type: string
+          format: date-time
+          description: The time the message was sent.
+    Org:
+      type: object
+      properties:
+         orgName:
+          type: string
+          description: The unique identifier for a user.
+         orgAdminName:
+          type: string
+          description: The unique identifier for a chat.
+         orgAdminCommunicationEmail:
+          type: string
+          description: The identifier for a user name.
+         logoBase64:
+          type: string
+          description: The unique identifier for a chatMetaId.
+         orgDescription:
+          type: string
+          description: The unique identifier for a datasetId.
+         orgAdminLoginId:
+          type: string
+          description: The identifier name for a dataset.
+         createdBy:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The identifier name for a likeType.
+            name:
+              type: string
+              description: The identifier name for a reason.
+            superUserEmail:
+              type: string
+              description: The identifier name for a suggestionType.
+         createdUTC:
+          type: string
+          format: date-time
+          description: The time the message was sent.
+
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: authorization
+      in: header
+      description: >-
+        Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".

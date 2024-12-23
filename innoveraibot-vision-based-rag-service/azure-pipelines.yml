@@ -1,0 +1,316 @@
+trigger:
+  branches:
+    include:
+      - main
+      - development
+
+parameters:
+  - name: ForceDevBuild
+    type: boolean
+    default: false
+    displayName: "Force Development Build"   
+
+  - name: ForceQaqcBuild
+    type: boolean
+    default: false
+    displayName: "Force QAQC Build"
+
+  - name: ForceCivicBuild
+    type: boolean
+    default: false
+    displayName: "Force Civic Build"  
+
+  - name: ForcePrdBuild
+    type: boolean
+    default: false
+    displayName: "Force Production Build" 
+       
+
+variables:
+  - group: "innoveraibot-common-variables"
+  - name: vmImageName
+    value: "ubuntu-latest"
+  - name: functionAppName
+    value: "vision-based-rag-service"
+  - name: workingDirectory
+    value: "./"
+  - name: isPrd
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  - name: isDev
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/development')]
+
+stages:
+  - stage: Build
+    displayName: Build stage
+
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageName)
+
+        steps:
+          - bash: |
+              if [ -f extensions.csproj ]
+              then
+                  dotnet build extensions.csproj --runtime ubuntu.16.04-x64 --output ./bin
+              fi
+            workingDirectory: $(workingDirectory)
+            displayName: "Build extensions"
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python 3.11"
+            inputs:
+              versionSpec: 3.11 # Functions V2 supports Python 3.6 as of today
+
+          
+
+          - bash: |
+              pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
+            workingDirectory: $(workingDirectory)
+            displayName: "Install application dependencies"
+
+          # - script: |
+          #     echo "Running unit tests"
+          #     source ./.python_packagees/bin/activate
+          #     pip install -r requirements.txt
+          #     pip install pytest pytest-azurepipelines
+          #     pip install pytest-cov
+          #     mkdir htmlcov
+          #     pytest tests --junitxml=junit/test-results.xml --cov=src --cov-report=xml --cov-report=html
+          #   displayName: "Unit tests"
+
+          # - task: PublishCodeCoverageResults@1
+          #   displayName: "Publish test results"
+          #   inputs:
+          #     codeCoverageTool: Cobertura
+          #     summaryFileLocation: "$(workingDirectory)/coverage.xml"
+          #     reportDirectory: "$(workingDirectory)/htmlcov"
+
+          # - task: PublishTestResults@2
+          #   displayName: "Publish test results"
+          #   inputs:
+          #     testResultsFiles: "**/junit/test-*.xml"
+          #     testRunTitle: "Unit tests"
+
+          - task: ArchiveFiles@2
+            displayName: "Archive files"
+            inputs:
+              rootFolderOrFile: "$(workingDirectory)"
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+              replaceExistingArchive: true
+
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+            artifact: drop
+
+# ======================================================= DEVELOPMENT =======================================================            
+
+  - stage: DeployDev
+    displayName: Deploy Dev Stage
+    dependsOn: Build
+    condition: or(eq('${{ parameters.ForceDevBuild }}', true), and(succeeded(), eq(variables.isDev, true)))
+
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy
+        environment: "development"
+        pool:
+          vmImage: $(vmImageName)
+        variables: 
+          - group: "innoveraibot-dev-variables"
+
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: .azure/templates/deployTemplate.yaml
+                  parameters:
+                    env: "dev"
+                    functionAppName: "$(fun-app-name-vision-based-rag-service)"
+                    azureSubscription: "$(azure-service-connection-dev)"
+
+
+  - stage: DeployDevSuccessNotification
+    displayName: Notify Dev Stage (Success)
+    dependsOn: DeployDEV
+    condition: succeeded()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: DEVELOPMENT SUCCESS! Function app $(functionAppName)-dev has been deployed to development environment successfully
+
+  - stage: DeployDevFailedNotification
+    displayName: Notify Dev Stage (Fail)
+    dependsOn: DeployDEV
+    condition: failed()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: DEVELOPMENT ALERT! Function app $(functionAppName)-dev failed to deploy to development environment
+
+
+
+
+# ======================================================= QAQC =======================================================
+
+
+  - stage: DeployQaqc
+    displayName: Deploy QAQC Stage
+    dependsOn: Build
+    condition: or(eq('${{ parameters.ForceQaqcBuild }}', true), and(succeeded(), eq(variables.isPrd, true)))
+
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy
+        environment: "qaqc"
+        pool:
+          vmImage: $(vmImageName)
+        variables: 
+          - group: "innoveraibot-qaqc-variables"
+
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: .azure/templates/deployTemplate.yaml
+                  parameters:
+                    env: "prd"
+                    functionAppName: "$(fun-app-name-vision-based-rag-service)"
+                    azureSubscription: "$(azure-service-connection-qaqc)"
+
+
+  - stage: DeployQaqcSuccessNotification
+    displayName: Notify QAQC Stage (Success)
+    dependsOn: DeployQaqc
+    condition: succeeded()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: PRODUCTION SUCCESS! Function app $(functionAppName)-qaqc has been deployed to development environment successfully
+
+  - stage: DeployQaqcFailedNotification
+    displayName: Notify QAQC Stage (Fail)
+    dependsOn: DeployQaqc
+    condition: failed()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: PRODUCTION ALERT! Function app $(functionAppName)-qaqc failed to deploy to development environment
+  
+
+# ======================================================= CIVIC =======================================================            
+
+  - stage: DeployCivic
+    displayName: Deploy Civic Stage
+    dependsOn: DeployQaqcSuccessNotification
+    condition: or(eq('${{ parameters.ForceCivicBuild }}', true), and(succeeded(), eq(variables.isPrd, true)))
+
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy
+        environment: "production-civic"
+        pool:
+          vmImage: $(vmImageName)
+        variables: 
+          - group: "innoveraibot-civic-variables"
+
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: .azure/templates/deployTemplate.yaml
+                  parameters:
+                    env: "civic"
+                    functionAppName: "$(fun-app-name-vision-based-rag-service)"
+                    azureSubscription: "$(azure-service-connection-civic)"
+
+
+
+# ======================================================= PRODUCTION =======================================================
+
+
+  - stage: DeployPrd
+    displayName: Deploy Prd Stage
+    dependsOn: DeployQaqcSuccessNotification
+    condition: or(eq('${{ parameters.ForcePrdBuild }}', true), and(succeeded(), eq(variables.isPrd, true)))
+
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy
+        environment: "production"
+        pool:
+          vmImage: $(vmImageName)
+
+        variables: 
+          - group: "innoveraibot-prd-variables"
+
+
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: .azure/templates/deployTemplate.yaml
+                  parameters:
+                    env: "prd"
+                    functionAppName: "$(fun-app-name-vision-based-rag-service)"
+                    azureSubscription: "$(azure-service-connection-prd)"
+
+
+
+  - stage: DeployPrdSuccessNotification
+    displayName: Notify Prod Stage (Success)
+    dependsOn: DeployPrd
+    condition: succeeded()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: PRODUCTION SUCCESS! Function app $(functionAppName)-dev has been deployed to development environment successfully
+
+  - stage: DeployPrdFailedNotification
+    displayName: Notify Prd Stage (Fail)
+    dependsOn: DeployPrd
+    condition: failed()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: PRODUCTION ALERT! Function app $(functionAppName) failed to deploy to development environment
+  
+ 

@@ -1,0 +1,252 @@
+trigger:
+  branches:
+    include:
+      - main
+      - development
+
+parameters:
+  - name: ForceDevBuild
+    type: boolean
+    default: false
+    displayName: "Force Development Build"   
+
+  - name: ForceQaqcBuild
+    type: boolean
+    default: false
+    displayName: "Force QAQC Build"
+
+  - name: ForceCivicBuild
+    type: boolean
+    default: false
+    displayName: "Force Civic Build"  
+
+  - name: ForcePrdBuild
+    type: boolean
+    default: false
+    displayName: "Force Production Build" 
+
+    
+
+variables:
+  - group: "innoveraibot-common-variables"
+  - name: vmImageName
+    value: "ubuntu-latest"
+  - name: functionAppName
+    value: "org-service" 
+  - name: apiID
+    value: "org-service"
+  - name: workingDirectory
+    value: "./"
+  - name: isPrd
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  - name: isDev
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/development')]
+
+stages:
+  - stage: Build
+    displayName: Build stage
+
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageName)
+
+        steps:
+        - task: NodeTool@0
+          inputs:
+            versionSpec: '10.x'
+          displayName: 'Install Node.js'
+
+        - script: |
+            if [ -f extensions.csproj ]
+            then
+                dotnet build extensions.csproj --runtime ubuntu.16.04-x64 --output ./bin
+            fi
+          displayName: 'Build extensions'
+
+        - script: |
+            npm install
+            npm run build --if-present
+            npm run test --if-present
+          displayName: 'Prepare binaries'
+
+        - task: ArchiveFiles@2
+          displayName: 'Archive files'
+          inputs:
+            rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+            includeRootFolder: false
+            archiveType: zip
+            archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+            replaceExistingArchive: true
+
+        - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+          artifact: drop
+
+# ======================================================= DEVELOPMENT =======================================================            
+
+  - stage: DeployDev
+    displayName: Deploy Dev Stage
+    dependsOn: Build
+    condition: or(eq('${{ parameters.ForceDevBuild }}', true), and(succeeded(), eq(variables.isDev, true)))
+
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy
+        environment: "development"
+        pool:
+          vmImage: $(vmImageName)
+        variables: 
+          - group: "innoveraibot-dev-variables"
+
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: .azure/templates/deployTemplate.yaml
+                  parameters:
+                    env: "dev"
+                    functionAppName: "$(fun-app-name-org-service)"
+                    azureSubscription: "$(azure-service-connection-dev)"
+
+  - stage: DeployDEVAPI
+    displayName: Deploy Dev APIM APIs
+    dependsOn: DeployDev
+    condition: succeeded()
+
+    jobs:
+      - job: build
+        pool:
+          vmImage: $(vmImageName)
+        variables: 
+          - group: "innoveraibot-dev-variables"
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: "$(azure-service-connection-dev)"
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                apimServiceName="$(apim-name)"
+                resourceGroupName="$(azure-resource-group-name)"
+                apiId="$(apiID)"
+                specPath='.doc/api.yaml'
+                az apim api import --specification-format "OpenApi" --specification-path $specPath --path $apiId  --api-id $apiId --resource-group $resourceGroupName --service-name $apimServiceName
+            displayName: 'Update DEV APIM APIs'
+
+  - stage: DeployDevSuccessNotification
+    displayName: Notify Dev Stage (Success)
+    dependsOn: DeployDEVAPI
+    condition: succeeded()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: DEVELOPMENT SUCCESS! Function app $(functionAppName)-dev has been deployed to development environment successfully
+
+  - stage: DeployDevFailedNotification
+    displayName: Notify Dev Stage (Fail)
+    dependsOn: DeployDEVAPI
+    condition: failed()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: DEVELOPMENT ALERT! Function app $(functionAppName)-dev failed to deploy to development environment
+
+
+
+
+# ======================================================= QAQC =======================================================
+
+
+  - stage: DeployQaqc
+    displayName: Deploy QAQC Stage
+    dependsOn: Build
+    condition: or(eq('${{ parameters.ForceQaqcBuild }}', true), and(succeeded(), eq(variables.isPrd, true)))
+
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy
+        environment: "qaqc"
+        pool:
+          vmImage: $(vmImageName)
+        variables: 
+          - group: "innoveraibot-qaqc-variables"
+
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: .azure/templates/deployTemplate.yaml
+                  parameters:
+                    env: "prd"
+                    functionAppName: "$(fun-app-name-org-service)"
+                    azureSubscription: "$(azure-service-connection-qaqc)"
+
+  - stage: DeployQAQCAPI
+    displayName: Deploy QAQC APIM APIs
+    dependsOn: DeployQaqc
+    condition: succeeded()
+
+    jobs:
+      - job: build
+        pool:
+          vmImage: $(vmImageName)
+        variables: 
+          - group: "innoveraibot-qaqc-variables"
+
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: "$(azure-service-connection-qaqc)"
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                apimServiceName="$(apim-name)"
+                resourceGroupName="$(azure-resource-group-name)"
+                apiId="$(apiID)"
+                specPath='.doc/api.yaml'
+                az apim api import --specification-format "OpenApi" --specification-path $specPath --path $apiId  --api-id $apiId --resource-group $resourceGroupName --service-name $apimServiceName
+            displayName: 'Update QAQC APIM APIs'
+
+  - stage: DeployQaqcSuccessNotification
+    displayName: Notify QAQC Stage (Success)
+    dependsOn: DeployQAQCAPI
+    condition: succeeded()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: PRODUCTION SUCCESS! Function app $(functionAppName)-qaqc has been deployed to development environment successfully
+
+  - stage: DeployQaqcFailedNotification
+    displayName: Notify QAQC Stage (Fail)
+    dependsOn: DeployQAQCAPI
+    condition: failed()
+
+    jobs:
+      - job: notification
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - template: .azure/templates/notifyTemplate.yaml
+            parameters:
+              teamsWebhook: "$(teams-webhook)"
+              teamsMessage: PRODUCTION ALERT! Function app $(functionAppName)-qaqc failed to deploy to development environment
+  

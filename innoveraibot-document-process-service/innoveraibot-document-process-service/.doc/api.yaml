@@ -1,0 +1,90 @@
+openapi: 3.0.3
+info:
+  title: InnoverAIBot - Training Services
+  version: 0.0.1
+servers:
+  - url: http://localhost:8000/api
+    description: Local server
+tags:
+  - name: Training
+    description: Operations about documents
+
+security:
+  - Bearer: []
+
+paths:
+  /wake-up:
+    get:
+      tags:
+        - General
+      summary: Wake-up the server
+      responses:
+        "200":
+          description: Server is awake
+
+          
+  /ai/{datasetId}/{documentId}:
+    post:
+      tags:
+        - Training
+      summary: Train the document
+      parameters:
+        - name: datasetId
+          in: path
+          required: true
+          description: The dataset id
+          schema:
+            type: string
+            format: uuid
+        - name: documentId
+          in: path
+          required: true
+          description: The document id
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BaseDocument"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BaseDocument"
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+  
+
+components:     
+  schemas:
+    BaseDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        blobPath:
+          type: string
+        documentType:
+          type: string
+      required:
+        - blobPath
+        - datasetId
+        - UserId
+        - documentType
+
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: >-
+        Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".

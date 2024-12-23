@@ -1,0 +1,16 @@
+{
+  "name": "innoveraibot-org-service",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/functions": "^4.0.0",
+    "@azure/storage-queue": "^12.22.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.4"
+  },
+  "main": "src/{index.js,functions/*.js}"
+}

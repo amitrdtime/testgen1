@@ -1,0 +1,12 @@
+azure-functions==1.18.0
+azure-storage-blob==12.19.1
+azure-storage-queue==12.9.0
+PyJWT==2.8.0
+setuptools
+wheel
+
+pymongo==4.6.2
+simsimd==3.7.7
+# Langchain - Summarization
+tenacity==8.3.0
+mongoengine==0.27.0
